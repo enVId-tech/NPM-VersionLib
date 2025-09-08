@@ -1,5 +1,23 @@
 {
+  "name": "npm-version-lib",
+  "version": "1.0.0",
+  "description": "A versioning tool for NPM based projects",
+  "homepage": "https://github.com/enVId-tech/NPM-VersionLib#readme",
+  "bugs": {
+    "url": "https://github.com/enVId-tech/NPM-VersionLib/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enVId-tech/NPM-VersionLib.git"
+  },
+  "license": "MIT",
+  "author": "enVId-tech",
+  "main": "generate-version.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "typescript": "^5.9.2"
-  }
+  },
+  "devDependencies": {}
 }
