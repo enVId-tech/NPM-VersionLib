@@ -1,7 +1,11 @@
 {
-  "name": "npm-version-lib",
-  "version": "25.09.10-dev.1",
-  "description": "A versioning tool for NPM based projects",
+  "name": "ts-version-lib",
+  "version": "25.09.10-dev.2",
+  "description": "A TypeScript/JavaScript versioning library that generates build versions based on date and git commits",
+  "bin": {
+    "npm-version": "./version-cli.js",
+    "version-gen": "./version-cli.js"
+  },
   "homepage": "https://github.com/enVId-tech/NPM-VersionLib#readme",
   "bugs": {
     "url": "https://github.com/enVId-tech/NPM-VersionLib/issues"
@@ -12,7 +16,7 @@
   },
   "license": "MIT",
   "author": "enVId-tech",
-  "main": "generate-version.js",
+  "main": "generate-version.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
