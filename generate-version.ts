@@ -6,7 +6,7 @@ type ReleaseType = "dev" | "beta" | "release";
 
 /**
  * Generates a build version based on current date and commit count for today
- * Format: YY.MM.DD.dev/beta/release.1 (e.g., 25.08.17-dev/beta/release.commit)
+ * Format: YY.MM.DD.dev/beta/releazse.1 (e.g., 25.08.17-dev/beta/release.commit)
  * - YY: Last two digits of year
  * - MM: Month (01-12)
  * - DD: Day (01-31)
@@ -32,9 +32,30 @@ function generateVersion(releaseType: ReleaseType): string | undefined {
             now.getDate().toString().padStart(2, '0')
         ].join('-');
 
-        return "";
+        const commitCount: number = Math.max(readPackageFile(), checkGitCount(todayStr), 1);
+
+        const version: string = `${year}.${month}.${day}-${releaseType}.${commitCount}`;
+        console.log(`Generated version: ${version}`);
+
+        return version;
     } catch (err: any) {
         console.log(`An error has occurred: ${err}`);
+    }
+}
+
+/**
+ * Checks for commit version in package.json
+ */
+function readPackageFile(): number {
+    try {
+        const packagePath = path.join(process.cwd(), 'package.json');
+        const packageData = fs.readFileSync(packagePath, 'utf-8');
+        const packageJson = JSON.parse(packageData);
+        return packageJson.version ? parseInt(packageJson.version.split('.').pop() || '0', 10) : 1;
+    } catch (err: any) {
+        console.warn('Warning: Could not read package.json, using default version 1');
+        console.warn('File error:', err.message);
+        return -1;
     }
 }
 
@@ -51,11 +72,77 @@ function checkGitCount(todayStr: string): number {
             return result.split('\n').length;
         }
 
-        return 1;
+        return -1;
     } catch (err: any) {
-      console.warn('Warning: Could not get git commit count, using default value 1');
-      console.warn('Git error:', err.message);
-      return 1;
+        console.warn('Warning: Could not get git commit count, using default value 1');
+        console.warn('Git error:', err.message);
+        return -1;
+    }
+}
+
+/**
+ * Updates the version in package.json
+ * @param newVersion The new version to set in package.json
+ */
+export function updatePackageVersion(newVersion: string): boolean {
+    try {
+        const packagePath = path.join(process.cwd(), 'package.json');
+        const packageData = fs.readFileSync(packagePath, 'utf-8');
+        const packageJson = JSON.parse(packageData);
+        packageJson.version = newVersion;
+        fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2), 'utf-8');
+        console.log(`Updated package.json version to ${newVersion}`);
+        return true;
+    } catch (err: any) {
+        console.error('Error updating package.json:', err.message);
+        return false;
+    }
+}
+
+/**
+ * Creates or updates a version.ts file with build information
+ */
+export function createVersionFile(version: string): boolean {
+    try {
+        const versionFilePath = path.join(process.cwd(), 'src', 'version.ts');
+
+        if (!fs.existsSync(path.dirname(versionFilePath))) {
+            fs.mkdirSync(path.dirname(versionFilePath), { recursive: true });
+        }
+
+        const now = new Date();
+        const buildDate = now.toISOString();
+        const buildTimestamp = now.getTime();
+
+        const versionFileContent = `// Auto-generated version file
+// Do not edit manually - this file is updated by scripts/generate-version.js
+
+export const BUILD_VERSION = '${version}';
+export const BUILD_DATE = '${buildDate}';
+export const BUILD_TIMESTAMP = ${buildTimestamp};
+export const BUILD_INFO = {
+  version: BUILD_VERSION,
+  date: BUILD_DATE,
+  timestamp: BUILD_TIMESTAMP,
+};
+
+// Helper function to get readable build date
+export const getBuildDateString = (): string => {
+  return new Date(BUILD_TIMESTAMP).toLocaleDateString();
+};
+
+// Helper function to get version display string
+export const getVersionDisplayString = (): string => {
+  return \`v\${BUILD_VERSION}\`.split('-')[0];
+};
+`;
+
+        fs.writeFileSync(versionFilePath, versionFileContent, 'utf-8');
+        console.log(`Created or updated ${versionFilePath}`);
+        return true;
+    } catch (err: any) {
+        console.error('Error creating version.ts file:', err.message);
+        return false;
     }
 }
 
@@ -63,10 +150,19 @@ function main(version: ReleaseType) {
     console.log("Generating build version...");
 
     const generatedVersion = generateVersion(version);
+    if (generatedVersion) {
+        console.log(`Build version generated: ${generatedVersion}`);
+        updatePackageVersion(generatedVersion);
+        createVersionFile(generatedVersion);
+        console.log('Version generation complete.');
+    } else {
+        console.error('Failed to generate build version.');
+        process.exit(1);
+    }
 }
 
 // Run if called directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === new URL(import.meta.url).href) {
     const argv: string | ReleaseType | undefined = process.argv[2];
 
     if (argv && ["dev", "beta", "release"].includes(argv)) {
@@ -75,4 +171,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         console.error('Please provide a valid release type: dev, beta, or release');
         process.exit(1);
     }
+}
+
+export {
+    generateVersion,
+    readPackageFile,
+    checkGitCount,
+    main
 }

@@ -1,0 +1,177 @@
+#!/usr/bin/env node
+
+/**
+ * TS-VersionLib CLI Tool
+ * A convenient command-line interface for generating version numbers
+ * 
+ * Usage:
+ *   ts-version [version-type]         # If installed globally
+ *   npx ts-version [version-type]     # If installed locally
+ *   node version-cli.js [version-type] # Direct execution
+ *   
+ * Version types:
+ *   dev      - Development version (default)
+ *   beta     - Beta release version  
+ *   release  - Production release version
+ * 
+ * Examples:
+ *   ts-version               # Generates dev version
+ *   ts-version dev           # Generates dev version
+ *   ts-version beta          # Generates beta version
+ *   ts-version release       # Generates release version
+ *   npx ts-version beta      # Using npx
+ */
+import path from 'path';
+import { createVersionFile, generateVersion, updatePackageVersion } from './generate-version.ts';
+
+type Colors = { [key: string]: string };
+
+const colors: Colors = {
+    reset: '\x1b[0m',
+    bright: '\x1b[1m',
+    red: '\x1b[31m',
+    green: '\x1b[32m',
+    yellow: '\x1b[33m',
+    blue: '\x1b[34m',
+    magenta: '\x1b[35m',
+    cyan: '\x1b[36m'
+};
+
+function colorize(text: string, color: keyof Colors): string {
+    return `${colors[color]}${text}${colors.reset}`;
+}
+
+function showHelp(): void {
+    console.log(colorize('TS-VersionLib CLI Tool', 'bright'));
+    console.log(colorize('========================', 'bright'));
+    console.log('');
+    console.log('A convenient command-line interface for generating version numbers');
+    console.log('');
+    console.log(colorize('Usage:', 'yellow'));
+    console.log('  ts-version [version-type]         # If installed globally');
+    console.log('  npx ts-version [version-type]     # If installed locally');
+    console.log('  node version-cli.js [version-type] # Direct execution');
+    console.log('');
+    console.log(colorize('Version types:', 'yellow'));
+    console.log('  dev      - Development version (default)');
+    console.log('  beta     - Beta release version');
+    console.log('  release  - Production release version');
+    console.log('');
+    console.log(colorize('Examples:', 'yellow'));
+    console.log('  ts-version               # Generates dev version');
+    console.log('  ts-version dev           # Generates dev version');
+    console.log('  ts-version beta          # Generates beta version');
+    console.log('  ts-version release       # Generates release version');
+    console.log('  npx ts-version beta      # Using npx');
+    console.log('');
+    console.log(colorize('For more information, visit:', 'cyan'));
+    console.log('https://www.npmjs.com/package/ts-versionlib');
+    console.log('');
+}
+
+function showVersion() {
+    console.log(colorize('TS-VersionLib CLI Tool', 'bright'));
+    console.log(colorize('========================', 'bright'));
+    console.log('');
+    console.log(colorize('Version:', 'yellow'));
+    console.log('  1.0.0');
+    console.log('');
+}
+
+function validateversionType(versionType: string): boolean {
+    const validTypes = ['dev', 'beta', 'release'];
+    return validTypes.includes(versionType);
+}
+
+function main() {
+    const args = process.argv.slice(2);
+
+    // Handle help flags
+    if (args.includes('--help') || args.includes('-h')) {
+        showHelp();
+        return;
+    }
+
+    // Handle version flags
+    if (args.includes('--version') || args.includes('-v')) {
+        showVersion();
+        return;
+    }
+
+    // Get version type from arguments
+    let versionType = args[0] || 'dev';
+
+    // Validate version type
+    if (!validateversionType(versionType)) {
+        console.error(colorize('Error:', 'red'), `Invalid version type "${versionType}"`);
+        console.error('Valid types are: dev, beta, release');
+        console.error('Use --help for more information');
+        process.exit(1);
+    }
+
+    try {
+        console.log(colorize('TS-VersionLib CLI', 'cyan'));
+        console.log(colorize('===================', 'cyan'));
+        console.log('');
+        console.log(colorize('Generating version...', 'yellow'));
+        console.log(`Version type: ${colorize(versionType, 'magenta')}`);
+        console.log('');
+
+        // Generate the version
+        const generatedVersion = generateVersion(versionType as 'dev' | 'beta' | 'release');
+
+        if (!generatedVersion) {
+            throw new Error('Failed to generate version');
+        }
+
+        console.log(colorize('Version generated:', 'green'), colorize(generatedVersion, 'bright'));
+        console.log('');
+
+        // Update package.json (if it exists)
+        console.log(colorize('Updating package.json...', 'yellow'));
+        const packageUpdated = updatePackageVersion(generatedVersion);
+
+        if (packageUpdated) {
+            console.log(colorize('package.json updated successfully', 'green'));
+        } else {
+            console.log(colorize('package.json not found or failed to update', 'yellow'));
+        }
+
+        // Create version.ts file
+        console.log(colorize('Creating version file...', 'yellow'));
+        const versionFileCreated = createVersionFile(generatedVersion);
+
+        if (versionFileCreated) {
+            console.log(colorize('src/version.ts created/updated successfully', 'green'));
+        } else {
+            console.log(colorize('Failed to create version file', 'red'));
+        }
+
+        console.log('');
+        console.log(colorize('Version generation completed!', 'green'));
+        console.log(colorize('Final version:', 'cyan'), colorize(generatedVersion, 'bright'));
+
+        // Also output the version for scripting purposes
+        process.stdout.write('\n' + generatedVersion + '\n');
+    } catch (error: any) {
+        console.error('');
+        console.error(colorize('Error:', 'red'), error.message);
+        console.error('');
+        console.error(colorize('Stack trace:', 'red'));
+        console.error(error.stack);
+        process.exit(1);
+    }
+}
+
+export {
+    generateVersion,
+    updatePackageVersion,
+    createVersionFile,
+    showHelp,
+    showVersion
+}
+
+// Run the main function if this script is executed directly
+if (import.meta.url === new URL(import.meta.url).href) {
+    main();
+}
