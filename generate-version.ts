@@ -133,7 +133,7 @@ export const getBuildDateString = (): string => {
 
 // Helper function to get version display string
 export const getVersionDisplayString = (): string => {
-  return \`v\${BUILD_VERSION}\`.split('-')[0];
+  return (\`v\${BUILD_VERSION}\`.split('-')[0]) ?? '';
 };
 `;
 

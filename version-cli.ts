@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 /**
- * TS-VersionLib CLI Tool
+ * NPM-VersionLib CLI Tool
  * A convenient command-line interface for generating version numbers
  * 
  * Usage:
- *   ts-version [version-type]         # If installed globally
- *   npx ts-version [version-type]     # If installed locally
+ *   npm-version [version-type]         # If installed globally
+ *   npx npm-version [version-type]     # If installed locally
  *   node version-cli.js [version-type] # Direct execution
  *   
  * Version types:
@@ -15,14 +15,15 @@
  *   release  - Production release version
  * 
  * Examples:
- *   ts-version               # Generates dev version
- *   ts-version dev           # Generates dev version
- *   ts-version beta          # Generates beta version
- *   ts-version release       # Generates release version
- *   npx ts-version beta      # Using npx
+ *   npm-version               # Generates dev version
+ *   npm-version dev           # Generates dev version
+ *   npm-version beta          # Generates beta version
+ *   npm-version release       # Generates release version
+ *   npx npm-version beta      # Using npx
  */
 import path from 'path';
 import { createVersionFile, generateVersion, updatePackageVersion } from './generate-version.ts';
+import { getVersionDisplayString } from './src/version.ts';
 
 type Colors = { [key: string]: string };
 
@@ -42,14 +43,14 @@ function colorize(text: string, color: keyof Colors): string {
 }
 
 function showHelp(): void {
-    console.log(colorize('TS-VersionLib CLI Tool', 'bright'));
+    console.log(colorize('NPM-VersionLib CLI Tool', 'bright'));
     console.log(colorize('========================', 'bright'));
     console.log('');
     console.log('A convenient command-line interface for generating version numbers');
     console.log('');
     console.log(colorize('Usage:', 'yellow'));
-    console.log('  ts-version [version-type]         # If installed globally');
-    console.log('  npx ts-version [version-type]     # If installed locally');
+    console.log('  npm-version [version-type]         # If installed globally');
+    console.log('  npx npm-version [version-type]     # If installed locally');
     console.log('  node version-cli.js [version-type] # Direct execution');
     console.log('');
     console.log(colorize('Version types:', 'yellow'));
@@ -58,23 +59,23 @@ function showHelp(): void {
     console.log('  release  - Production release version');
     console.log('');
     console.log(colorize('Examples:', 'yellow'));
-    console.log('  ts-version               # Generates dev version');
-    console.log('  ts-version dev           # Generates dev version');
-    console.log('  ts-version beta          # Generates beta version');
-    console.log('  ts-version release       # Generates release version');
-    console.log('  npx ts-version beta      # Using npx');
+    console.log('  npm-version               # Generates dev version');
+    console.log('  npm-version dev           # Generates dev version');
+    console.log('  npm-version beta          # Generates beta version');
+    console.log('  npm-version release       # Generates release version');
+    console.log('  npx npm-version beta      # Using npx');
     console.log('');
     console.log(colorize('For more information, visit:', 'cyan'));
-    console.log('https://www.npmjs.com/package/ts-versionlib');
+    console.log('https://www.npmjs.com/package/npm-version-lib');
     console.log('');
 }
 
 function showVersion() {
-    console.log(colorize('TS-VersionLib CLI Tool', 'bright'));
+    console.log(colorize('NPM-VersionLib CLI Tool', 'bright'));
     console.log(colorize('========================', 'bright'));
     console.log('');
     console.log(colorize('Version:', 'yellow'));
-    console.log('  1.0.0');
+    console.log(colorize(getVersionDisplayString(), 'green'));
     console.log('');
 }
 
@@ -84,7 +85,7 @@ function validateversionType(versionType: string): boolean {
 }
 
 function main() {
-    const args = process.argv.slice(2);
+    const args = process.argv.pop()?.toString() ?? 'dev';
 
     // Handle help flags
     if (args.includes('--help') || args.includes('-h')) {
@@ -99,7 +100,7 @@ function main() {
     }
 
     // Get version type from arguments
-    let versionType = args[0] || 'dev';
+    let versionType = args || 'dev';
 
     // Validate version type
     if (!validateversionType(versionType)) {
@@ -110,7 +111,7 @@ function main() {
     }
 
     try {
-        console.log(colorize('TS-VersionLib CLI', 'cyan'));
+        console.log(colorize('NPM-VersionLib CLI', 'cyan'));
         console.log(colorize('===================', 'cyan'));
         console.log('');
         console.log(colorize('Generating version...', 'yellow'));
