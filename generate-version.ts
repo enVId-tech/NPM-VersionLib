@@ -32,7 +32,7 @@ function generateVersion(releaseType: ReleaseType): string | undefined {
             now.getDate().toString().padStart(2, '0')
         ].join('-');
 
-        const commitCount: number = Math.max(readPackageFile(), checkGitCount(todayStr), 1);
+        const commitCount: number = checkGitCount(todayStr) !== -1 ? checkGitCount(todayStr) : readPackageFile() !== -1 ? readPackageFile() : 1;
 
         const version: string = `${year}.${month}.${day}-${releaseType}.${commitCount}`;
         console.log(`Generated version: ${version}`);
