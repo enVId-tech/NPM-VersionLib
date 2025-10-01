@@ -1,10 +1,10 @@
 {
   "name": "npm-version-lib",
-  "version": "25.09.10-beta.4",
+  "version": "25.10.01-dev.1",
   "description": "A TypeScript/JavaScript versioning library that generates build versions based on date and git commits",
   "bin": {
-    "npm-version": "./version-cli.js",
-    "version-gen": "./version-cli.js"
+    "npm-version": "./version-cli.ts",
+    "version-gen": "./version-cli.ts"
   },
   "homepage": "https://github.com/enVId-tech/NPM-VersionLib#readme",
   "bugs": {
@@ -18,6 +18,10 @@
   "author": "enVId-tech",
   "main": "generate-version.ts",
   "scripts": {
+    "version:dev": "node --experimental-strip-types ./version-cli.ts dev",
+    "version:beta": "node --experimental-strip-types ./version-cli.ts beta",
+    "version:release": "node --experimental-strip-types ./version-cli.ts release",
+    "version": "node --experimental-strip-types ./version-cli.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

@@ -21,9 +21,7 @@
  *   npm-version release       # Generates release version
  *   npx npm-version beta      # Using npx
  */
-import path from 'path';
 import { createVersionFile, generateVersion, updatePackageVersion } from './generate-version.ts';
-import { getVersionDisplayString } from './src/version.ts';
 
 type Colors = { [key: string]: string };
 
@@ -74,9 +72,6 @@ function showVersion() {
     console.log(colorize('NPM-VersionLib CLI Tool', 'bright'));
     console.log(colorize('========================', 'bright'));
     console.log('');
-    console.log(colorize('Version:', 'yellow'));
-    console.log(colorize(getVersionDisplayString(), 'green'));
-    console.log('');
 }
 
 function validateversionType(versionType: string): boolean {
@@ -85,7 +80,9 @@ function validateversionType(versionType: string): boolean {
 }
 
 function main() {
-    const args = process.argv.pop()?.toString() ?? 'dev';
+    console.log('executing main');
+
+    const args = process.argv[2]?.toString() ?? 'dev';
 
     // Handle help flags
     if (args.includes('--help') || args.includes('-h')) {
@@ -164,15 +161,16 @@ function main() {
     }
 }
 
+// Run if called directly
+const scriptPath = process.argv[1]?.replace(/\\/g, '/');
+if (scriptPath && import.meta.url === `file:///${scriptPath}`) {
+    main();
+}
+
 export {
     generateVersion,
     updatePackageVersion,
     createVersionFile,
     showHelp,
     showVersion
-}
-
-// Run the main function if this script is executed directly
-if (import.meta.url === new URL(import.meta.url).href) {
-    main();
 }

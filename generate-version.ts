@@ -32,7 +32,7 @@ function generateVersion(releaseType: ReleaseType): string | undefined {
             now.getDate().toString().padStart(2, '0')
         ].join('-');
 
-        const commitCount: number = checkGitCount(todayStr) !== -1 ? checkGitCount(todayStr) : readPackageFile() !== -1 ? readPackageFile() : 1;
+        const commitCount: number = checkGitCount(todayStr) !== -1 ? checkGitCount(todayStr) : 0 // readPackageFile() !== -1 ? readPackageFile() : 1;
 
         const version: string = `${year}.${month}.${day}-${releaseType}.${commitCount}`;
         console.log(`Generated version: ${version}`);
@@ -64,17 +64,19 @@ function readPackageFile(): number {
  */
 function checkGitCount(todayStr: string): number {
     try {
-        const gitCmd = `git log --since="${todayStr} 00:00:00" --until="${todayStr} 23:59:59" --oneline --count`;
-        const result = execSync(gitCmd, { encoding: 'utf8', cwd: process.cwd() });
+        const gitCmd = `git rev-list --count --since="${todayStr} 00:00:00" --until="${todayStr} 23:59:59" HEAD`;
+        const result = execSync(gitCmd, { encoding: 'utf-8' }).trim();
 
-        if (result) {
-            console.log(`Git command output: ${result}`);
-            return result.split('\n').length;
+        console.log(`Git command executed: ${gitCmd}`);
+        console.log(`Git commit count: ${result}`);
+
+        if (result && !isNaN(parseInt(result))) {
+            return parseInt(result);
         }
 
         return -1;
     } catch (err: any) {
-        console.warn('Warning: Could not get git commit count, using default value 1');
+        console.warn('Warning: Could not get git commit count, using default value 0');
         console.warn('Git error:', err.message);
         return -1;
     }
@@ -162,7 +164,8 @@ function main(version: ReleaseType) {
 }
 
 // Run if called directly
-if (import.meta.url === new URL(import.meta.url).href) {
+const scriptPath = process.argv[1]?.replace(/\\/g, '/');
+if (scriptPath && import.meta.url === `file:///${scriptPath}`) {
     const argv: string | ReleaseType | undefined = process.argv[2];
 
     if (argv && ["dev", "beta", "release"].includes(argv)) {
