@@ -21,7 +21,7 @@
  *   npm-version release       # Generates release version
  *   npx npm-version beta      # Using npx
  */
-import { createVersionFile, generateVersion, updatePackageVersion } from './generate-version.ts';
+import { createVersionFile, generateVersion, updatePackageVersion } from './generate-version.js';
 
 type Colors = { [key: string]: string };
 
@@ -80,8 +80,7 @@ function validateversionType(versionType: string): boolean {
 }
 
 function main() {
-    console.log('executing main');
-
+    // Get the argument after the script name (index 2)
     const args = process.argv[2]?.toString() ?? 'dev';
 
     // Handle help flags
@@ -161,12 +160,6 @@ function main() {
     }
 }
 
-// Run if called directly
-const scriptPath = process.argv[1]?.replace(/\\/g, '/');
-if (scriptPath && import.meta.url === `file:///${scriptPath}`) {
-    main();
-}
-
 export {
     generateVersion,
     updatePackageVersion,
@@ -174,3 +167,6 @@ export {
     showHelp,
     showVersion
 }
+
+// Run main function - this file is meant to be executed as a CLI tool
+main();

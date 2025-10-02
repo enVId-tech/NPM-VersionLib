@@ -1,10 +1,10 @@
 {
   "name": "npm-version-lib",
-  "version": "25.10.01-dev.1",
+  "version": "25.10.02-beta.0",
   "description": "A TypeScript/JavaScript versioning library that generates build versions based on date and git commits",
   "bin": {
-    "npm-version": "./version-cli.ts",
-    "version-gen": "./version-cli.ts"
+    "npm-version": "./dist/version-cli.js",
+    "version-gen": "./dist/version-cli.js"
   },
   "homepage": "https://github.com/enVId-tech/NPM-VersionLib#readme",
   "bugs": {
@@ -16,12 +16,24 @@
   },
   "license": "MIT",
   "author": "enVId-tech",
-  "main": "generate-version.ts",
+  "main": "./dist/generate-version.js",
+  "types": "./dist/generate-version.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "version:dev": "node --experimental-strip-types ./version-cli.ts dev",
-    "version:beta": "node --experimental-strip-types ./version-cli.ts beta",
-    "version:release": "node --experimental-strip-types ./version-cli.ts release",
-    "version": "node --experimental-strip-types ./version-cli.ts",
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "dev:version:dev": "node --experimental-strip-types ./version-cli.ts dev",
+    "dev:version:beta": "node --experimental-strip-types ./version-cli.ts beta",
+    "dev:version:release": "node --experimental-strip-types ./version-cli.ts release",
+    "dev:version": "node --experimental-strip-types ./version-cli.ts",
+    "version:dev": "node ./dist/version-cli.js dev",
+    "version:beta": "node ./dist/version-cli.js beta",
+    "version:release": "node ./dist/version-cli.js release",
+    "version": "node ./dist/version-cli.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

@@ -67,8 +67,8 @@ function checkGitCount(todayStr: string): number {
         const gitCmd = `git rev-list --count --since="${todayStr} 00:00:00" --until="${todayStr} 23:59:59" HEAD`;
         const result = execSync(gitCmd, { encoding: 'utf-8' }).trim();
 
-        console.log(`Git command executed: ${gitCmd}`);
-        console.log(`Git commit count: ${result}`);
+        // console.log(`Git command executed: ${gitCmd}`);
+        // console.log(`Git commit count: ${result}`);
 
         if (result && !isNaN(parseInt(result))) {
             return parseInt(result);
