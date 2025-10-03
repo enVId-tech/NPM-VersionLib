@@ -40,7 +40,8 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
     "moduleResolution": "nodenext",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "rewriteRelativeImportExtensions": true
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]

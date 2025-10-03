@@ -5,3 +5,5 @@ tsconfig.json
 .gitignore
 .vscode/
 *.log
+version-cli.ts
+generate-version.ts
