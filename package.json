@@ -1,6 +1,6 @@
 {
   "name": "npm-version-lib",
-  "version": "25.10.02-beta.0",
+  "version": "25.10.02-release.1",
   "description": "A TypeScript/JavaScript versioning library that generates build versions based on date and git commits",
   "bin": {
     "npm-version": "./dist/version-cli.js",
@@ -26,14 +26,14 @@
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build",
-    "dev:version:dev": "node --experimental-strip-types ./version-cli.ts dev",
-    "dev:version:beta": "node --experimental-strip-types ./version-cli.ts beta",
-    "dev:version:release": "node --experimental-strip-types ./version-cli.ts release",
-    "dev:version": "node --experimental-strip-types ./version-cli.ts",
-    "version:dev": "node ./dist/version-cli.js dev",
-    "version:beta": "node ./dist/version-cli.js beta",
-    "version:release": "node ./dist/version-cli.js release",
-    "version": "node ./dist/version-cli.js",
+    "dev:version:dev": "npx ts-node ./version-cli.ts dev",
+    "dev:version:beta": "npx ts-node ./version-cli.ts beta",
+    "dev:version:release": "npx ts-node ./version-cli.ts release",
+    "dev:version": "npx ts-node ./version-cli.ts",
+    "version:dev": "npx ts-node ./dist/version-cli.js dev",
+    "version:beta": "npx ts-node ./dist/version-cli.js beta",
+    "version:release": "npx ts-node ./dist/version-cli.js release",
+    "version": "npx ts-node ./dist/version-cli.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
