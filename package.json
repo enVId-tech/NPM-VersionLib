@@ -1,6 +1,6 @@
 {
   "name": "npm-version-lib",
-  "version": "25.10.02-beta.2",
+  "version": "25.10.02-release.3",
   "description": "A TypeScript/JavaScript versioning library that generates build versions based on date and git commits",
   "bin": {
     "npm-version": "./dist/version-cli.js",
@@ -34,10 +34,11 @@
     "version:beta": "node ./dist/version-cli.js beta",
     "version:release": "node ./dist/version-cli.js release",
     "version": "node ./dist/version-cli.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "ncu": "ncu -u && npm install"
   },
-  "devDependencies": {
-    "@types/node": "^24.3.1"
-  },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "npm-check-updates": "^19.1.2"
+  }
 }
