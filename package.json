@@ -39,6 +39,6 @@
   },
   "type": "module",
   "dependencies": {
-    "npm-check-updates": "^19.1.2"
+    "npm-check-updates": "^19.2.0"
   }
 }
