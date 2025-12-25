@@ -1,9 +1,10 @@
 {
   "name": "npm-version-lib",
-  "version": "25.10.02-release.3",
+  "version": "25.12.25-dev.2",
   "description": "A TypeScript/JavaScript versioning library that generates build versions based on date and git commits",
   "bin": {
     "npm-version": "./dist/version-cli.js",
+    "npm-v": "./dist/version-cli.js",
     "version-gen": "./dist/version-cli.js"
   },
   "homepage": "https://github.com/enVId-tech/NPM-VersionLib#readme",
@@ -39,6 +40,12 @@
   },
   "type": "module",
   "dependencies": {
+    "debug": "^4.4.3",
+    "dotenv": "^17.2.3",
     "npm-check-updates": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.12",
+    "@types/node": "^25.0.3"
   }
 }
