@@ -1,6 +1,6 @@
 {
   "name": "npm-version",
-  "version": "25.12.26-dev.0",
+  "version": "25.12.26-dev.2",
   "description": "A TypeScript/JavaScript versioning library that generates build versions based on date and git commits",
   "bin": {
     "npm-version": "dist/version-cli.js",
@@ -27,14 +27,7 @@
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build",
-    "dev:version:dev": "npx ts-node ./version-cli.ts dev",
-    "dev:version:beta": "npx ts-node ./version-cli.ts beta",
-    "dev:version:release": "npx ts-node ./version-cli.ts release",
-    "dev:version": "npx ts-node ./version-cli.ts",
-    "version:dev": "node ./dist/version-cli.js dev",
-    "version:beta": "node ./dist/version-cli.js beta",
-    "version:release": "node ./dist/version-cli.js release",
-    "version": "node ./dist/version-cli.js",
+    "version": "npm run build && node ./dist/version-cli.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "ncu": "npx npm-check-updates -u && npm install",
     "publish": "npm publish --access public --tag latest"

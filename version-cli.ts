@@ -25,7 +25,7 @@ import { createVersionFile, generateVersion, updatePackageVersion } from './gene
 
 type Colors = { [key: string]: string };
 
-const colors: Colors = {
+export const colors: Colors = {
     reset: '\x1b[0m',
     bright: '\x1b[1m',
     red: '\x1b[31m',
@@ -51,7 +51,7 @@ function showHelp(): void {
     console.log('  npx npm-version [version-type]     # If installed locally');
     console.log('  node version-cli.js [version-type] # Direct execution');
     console.log('');
-    console.log(colorize('Version types:', 'yellow'));
+    console.log(colorize('Default version types:', 'yellow'));
     console.log('  dev      - Development version (default)');
     console.log('  beta     - Beta release version');
     console.log('  release  - Production release version');
@@ -64,19 +64,23 @@ function showHelp(): void {
     console.log('  npx npm-version beta      # Using npx');
     console.log('');
     console.log(colorize('For more information, visit:', 'cyan'));
-    console.log('https://www.npmjs.com/package/npm-version-lib');
+    console.log('https://www.npmjs.com/package/npm-version');
     console.log('');
 }
 
 function showVersion() {
-    console.log(colorize('NPM-VersionLib CLI Tool', 'bright'));
+    console.log(colorize('NPM-Version CLI Tool', 'bright'));
     console.log(colorize('========================', 'bright'));
     console.log('');
 }
 
-function validateversionType(versionType: string): boolean {
-    const validTypes = ['dev', 'beta', 'release'];
-    return validTypes.includes(versionType);
+/**
+ * Validates the version type input
+ * @param versionType - The version type string to validate
+ * @returns {boolean} False if invalid, true otherwise
+ */
+function validateVersionType(versionType: string): boolean {
+    return (!versionType || versionType.length === 0 || typeof versionType !== 'string')
 }
 
 function main() {
@@ -99,15 +103,16 @@ function main() {
     let versionType = args || 'dev';
 
     // Validate version type
-    if (!validateversionType(versionType)) {
+    if (validateVersionType(versionType)) {
         console.error(colorize('Error:', 'red'), `Invalid version type "${versionType}"`);
-        console.error('Valid types are: dev, beta, release');
+        console.error('Default types are: dev, beta, release');
+        console.error('Input a string without spaces for a custom type or leave empty for dev.');
         console.error('Use --help for more information');
         process.exit(1);
     }
 
     try {
-        console.log(colorize('NPM-VersionLib CLI', 'cyan'));
+        console.log(colorize('NPM-Version CLI', 'cyan'));
         console.log(colorize('===================', 'cyan'));
         console.log('');
         console.log(colorize('Generating version...', 'yellow'));
@@ -115,7 +120,7 @@ function main() {
         console.log('');
 
         // Generate the version
-        const generatedVersion = generateVersion(versionType as 'dev' | 'beta' | 'release');
+        const generatedVersion = generateVersion(versionType);
 
         if (!generatedVersion) {
             throw new Error('Failed to generate version');

@@ -2,11 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 
-type ReleaseType = "dev" | "beta" | "release";
-
 /**
  * Generates a build version based on current date and commit count for today
- * Format: YY.MM.DD.dev/beta/releazse.1 (e.g., 25.08.17-dev/beta/release.commit)
+ * Format: YY.MM.DD.dev/beta/releazse.1 (e.g., [YY].[MM].[DD]-[type].[commit])
  * - YY: Last two digits of year
  * - MM: Month (01-12)
  * - DD: Day (01-31)
@@ -18,7 +16,7 @@ type ReleaseType = "dev" | "beta" | "release";
  * @returns string The complete version number based on the format documented above.
  * @throws error if an error has an occurred
  */
-function generateVersion(releaseType: ReleaseType): string | undefined {
+function generateVersion(releaseType: string): string | undefined {
     try {
         // Get current date
         const now = new Date();
@@ -148,7 +146,7 @@ export const getVersionDisplayString = (): string => {
     }
 }
 
-function main(version: ReleaseType) {
+function main(version: string) {
     console.log("Generating build version...");
 
     const generatedVersion = generateVersion(version);
@@ -166,10 +164,10 @@ function main(version: ReleaseType) {
 // Run if called directly
 const scriptPath = process.argv[1]?.replace(/\\/g, '/');
 if (scriptPath && import.meta.url === `file:///${scriptPath}`) {
-    const argv: string | ReleaseType | undefined = process.argv[2];
+    const argv: string | undefined = process.argv[2];
 
     if (argv && ["dev", "beta", "release"].includes(argv)) {
-        main(argv as ReleaseType);
+        main(argv);
     } else {
         console.error('Please provide a valid release type: dev, beta, or release');
         process.exit(1);
