@@ -1,6 +1,6 @@
 {
-  "name": "npm-version",
-  "version": "25.12.26-dev.2",
+  "name": "npm-version-lib",
+  "version": "25.12.26-dev.3",
   "description": "A TypeScript/JavaScript versioning library that generates build versions based on date and git commits",
   "bin": {
     "npm-version": "dist/version-cli.js",
@@ -29,8 +29,7 @@
     "prepublishOnly": "npm run build",
     "version": "npm run build && node ./dist/version-cli.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "ncu": "npx npm-check-updates -u && npm install",
-    "publish": "npm publish --access public --tag latest"
+    "ncu": "npx npm-check-updates -u && npm install"
   },
   "type": "module",
   "dependencies": {
