@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { createVersionFile, generateVersion, updatePackageVersion } from './generate-version.js';
 
+/** ANSI color codes for terminal output */
 const c = {
     r: '\x1b[0m',
     b: '\x1b[1m',
@@ -11,8 +12,18 @@ const c = {
     mag: '\x1b[35m'
 };
 
+/**
+ * Wraps text with ANSI color codes for terminal output
+ * @param text - The text to colorize
+ * @param color - The ANSI color code to apply
+ * @returns The text wrapped with color codes
+ */
 const colorize = (text: string, color: string) => `${color}${text}${c.r}`;
 
+/**
+ * Displays help information for the CLI tool
+ * Shows usage instructions, available version types, and examples
+ */
 function showHelp(): void {
     console.log(colorize('NPM-VersionLib CLI', c.b) + '\n');
     console.log(colorize('Usage:', c.yel));
@@ -23,6 +34,12 @@ function showHelp(): void {
     console.log(colorize('More:', c.cyn) + ' https://www.npmjs.com/package/npm-version-lib\n');
 }
 
+/**
+ * Main CLI entry point
+ * Parses command-line arguments, validates input, generates version number,
+ * and updates package.json and version.ts files
+ * @throws {Error} When version generation or file updates fail
+ */
 function main() {
     const arg = process.argv[2] || 'dev';
 

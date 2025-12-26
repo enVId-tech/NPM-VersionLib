@@ -3,8 +3,15 @@ import path from 'path';
 import { execSync } from 'child_process';
 
 /**
- * Generates version: YY.MM.DD-[type].[latest commit]
- * Example: 25.12.26-dev.3
+ * Generates a semantic version number based on current date and git commits
+ * Format: YY.MM.DD-[type].[commits]
+ * 
+ * @param releaseType - The release type (e.g., 'dev', 'beta', 'release', or custom)
+ * @returns The generated version string, or undefined if generation fails
+ * @example
+ * generateVersion('dev')     // '25.12.26-dev.3'
+ * generateVersion('beta')    // '25.12.26-beta.1'
+ * generateVersion('release') // '25.12.26-release.2'
  */
 function generateVersion(releaseType: string): string | undefined {
     try {
@@ -22,7 +29,12 @@ function generateVersion(releaseType: string): string | undefined {
 }
 
 /**
- * Checks for commit history in Git
+ * Retrieves the number of git commits made today
+ * 
+ * @param todayStr - Date string in format 'YYYY-MM-DD'
+ * @returns The count of commits made today, or 0 if git is unavailable or an error occurs
+ * @example
+ * checkGitCount('2025-12-26') // 5
  */
 function checkGitCount(todayStr: string): number {
     try {
@@ -34,6 +46,14 @@ function checkGitCount(todayStr: string): number {
     }
 }
 
+/**
+ * Updates the version field in package.json with the new version number
+ * 
+ * @param newVersion - The new version string to set in package.json
+ * @returns True if the update was successful, false if an error occurred
+ * @example
+ * updatePackageVersion('25.12.26-dev.3') // Updates package.json version
+ */
 export function updatePackageVersion(newVersion: string): boolean {
     try {
         const pkgPath = path.join(process.cwd(), 'package.json');
@@ -46,6 +66,15 @@ export function updatePackageVersion(newVersion: string): boolean {
     }
 }
 
+/**
+ * Creates or updates src/version.ts with build metadata
+ * Generates a TypeScript file containing version constants and helper functions
+ * 
+ * @param version - The version string to include in the generated file
+ * @returns True if the file was created successfully, false if an error occurred
+ * @example
+ * createVersionFile('25.12.26-dev.3') // Creates src/version.ts with build info
+ */
 export function createVersionFile(version: string): boolean {
     try {
         const filePath = path.join(process.cwd(), 'src', 'version.ts');
