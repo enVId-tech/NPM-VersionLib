@@ -1,11 +1,11 @@
 {
-  "name": "npm-version-lib",
+  "name": "npm-version",
   "version": "25.12.26-dev.0",
   "description": "A TypeScript/JavaScript versioning library that generates build versions based on date and git commits",
   "bin": {
-    "npm-version": "./dist/version-cli.js",
-    "npm-v": "./dist/version-cli.js",
-    "version-gen": "./dist/version-cli.js"
+    "npm-version": "dist/version-cli.js",
+    "npm-v": "dist/version-cli.js",
+    "version-gen": "dist/version-cli.js"
   },
   "homepage": "https://github.com/enVId-tech/NPM-VersionLib#readme",
   "bugs": {
@@ -36,7 +36,8 @@
     "version:release": "node ./dist/version-cli.js release",
     "version": "node ./dist/version-cli.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "ncu": "npx npm-check-updates -u && npm install"
+    "ncu": "npx npm-check-updates -u && npm install",
+    "publish": "npm publish --access public --tag latest"
   },
   "type": "module",
   "dependencies": {
