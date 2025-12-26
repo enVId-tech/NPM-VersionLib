@@ -49,7 +49,6 @@ function showHelp(): void {
     console.log(colorize('Usage:', 'yellow'));
     console.log('  npm-version [version-type]         # If installed globally');
     console.log('  npx npm-version [version-type]     # If installed locally');
-    console.log('  node version-cli.js [version-type] # Direct execution');
     console.log('');
     console.log(colorize('Default version types:', 'yellow'));
     console.log('  dev      - Development version (default)');
@@ -64,12 +63,12 @@ function showHelp(): void {
     console.log('  npx npm-version beta      # Using npx');
     console.log('');
     console.log(colorize('For more information, visit:', 'cyan'));
-    console.log('https://www.npmjs.com/package/npm-version');
+    console.log('https://www.npmjs.com/package/npm-version-lib');
     console.log('');
 }
 
 function showVersion() {
-    console.log(colorize('NPM-Version CLI Tool', 'bright'));
+    console.log(colorize('NPM-VersionLib CLI Tool', 'bright'));
     console.log(colorize('========================', 'bright'));
     console.log('');
 }
@@ -112,8 +111,8 @@ function main() {
     }
 
     try {
-        console.log(colorize('NPM-Version CLI', 'cyan'));
-        console.log(colorize('===================', 'cyan'));
+        console.log(colorize('NPM-VersionLib CLI', 'cyan'));
+        console.log(colorize('====================', 'cyan'));
         console.log('');
         console.log(colorize('Generating version...', 'yellow'));
         console.log(`Version type: ${colorize(versionType, 'magenta')}`);
