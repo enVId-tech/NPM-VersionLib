@@ -176,14 +176,23 @@ export function generateAndUpdateVersion(releaseType: string = 'dev', options: V
 
 /**
  * Creates or updates a TypeScript version file with build metadata
- * This is optional - useful if you want a generated file in your project
+ * This is optional - only call if you want a generated file in your project
  * 
  * @param version - The version string to include in the generated file
  * @param options - Configuration options with optional outputPath for custom file location
  * @returns True if the file was created successfully, false if an error occurred
  * @example
- * createVersionFile('25.12.26-dev.3') // Creates src/version.ts with build info
- * createVersionFile('1.0.0', { projectPath: './my-app', outputPath: 'lib/version.ts' })
+ * // Optional: Create a version.ts file with build info
+ * const version = generateVersion('release');
+ * if (version) {
+ *   createVersionFile(version); // Creates src/version.ts
+ * }
+ * 
+ * // Custom output path
+ * createVersionFile('1.0.0', { 
+ *   projectPath: './my-app', 
+ *   outputPath: 'lib/version.ts' 
+ * });
  */
 export function createVersionFile(
     version: string, 
@@ -214,3 +223,4 @@ export const getVersionDisplayString = () => BUILD_VERSION.split('-')[0];
         return false;
     }
 }
+

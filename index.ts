@@ -24,7 +24,7 @@ export {
     
     // File operations
     updatePackageVersion,
-    createVersionFile,
+    createVersionFile,  // Optional: only call if you want a generated version.ts file
     
     // Utilities
     getGitCommitCount,

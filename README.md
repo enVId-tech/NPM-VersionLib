@@ -139,16 +139,6 @@ Updates package.json with a specific version.
 updatePackageVersion('1.2.3-beta.1');
 ```
 
-#### `createVersionFile(version, options?)`
-
-Creates src/version.ts with build metadata (optional).
-
-```typescript
-const version = generateVersion('release');
-createVersionFile(version);
-// Creates src/version.ts with constants
-```
-
 #### `getGitCommitCount(dateStr, options?)`
 
 Gets the number of git commits for a specific date.
@@ -156,6 +146,23 @@ Gets the number of git commits for a specific date.
 ```typescript
 const commits = getGitCommitCount('2025-12-26');
 console.log(commits); // 5
+```
+
+#### `createVersionFile(version, options?)` (Optional)
+
+Creates a TypeScript version file with build metadata. Only use if you want a generated file.
+
+```typescript
+// Optional: Create src/version.ts with build info
+const version = generateVersion('release');
+if (version) {
+  createVersionFile(version);
+}
+
+// Custom output path
+createVersionFile(version, { 
+  outputPath: 'lib/version.ts' 
+});
 ```
 
 ### Options
@@ -186,7 +193,8 @@ const releaseType = process.env.RELEASE_TYPE || 'dev';
 const version = generateAndUpdateVersion(releaseType);
 
 if (version) {
-  createVersionFile(version); // Optional: create version.ts
+  // Optional: create a version.ts file if needed
+  createVersionFile(version);
   console.log(`Building version ${version}...`);
 }
 ```
@@ -239,8 +247,8 @@ if (version) {
 2. **Git commit counting**: Counts commits made today to generate build number
 3. **Flexible integration**: Use via CLI or import as a library
 4. **No file generation required**: Version info accessed via function calls
-5. **Optional version file**: Can generate src/version.ts if needed
-
+5. **Direct version access**: Get version info via function calls
+5. **Updates package.json**: Automatically updates your project version
 ## TypeScript Support
 
 Full TypeScript definitions are included. Import types as needed:

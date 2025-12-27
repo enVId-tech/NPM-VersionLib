@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { createVersionFile, generateVersion, updatePackageVersion } from './generate-version.js';
+import { generateVersion, updatePackageVersion } from './generate-version.js';
 
 /** ANSI color codes for terminal output */
 const c = {
@@ -37,7 +37,7 @@ function showHelp(): void {
 /**
  * Main CLI entry point
  * Parses command-line arguments, validates input, generates version number,
- * and updates package.json and version.ts files
+ * and updates package.json
  * @throws {Error} When version generation or file updates fail
  */
 function main() {
@@ -61,7 +61,6 @@ function main() {
         if (!version) throw new Error('Version generation failed');
 
         updatePackageVersion(version, { silent: true });
-        createVersionFile(version, { silent: true });
 
         console.log(colorize(`✓ Version: ${version}`, c.grn));
         process.stdout.write(version + '\n');
