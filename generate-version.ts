@@ -10,6 +10,8 @@ export interface VersionOptions {
     projectPath?: string;
     /** Whether to suppress console output */
     silent?: boolean;
+    /** Override the git commit count with a custom number */
+    overrideCommitCount?: number;
 }
 
 /**
@@ -58,6 +60,7 @@ export function getProjectVersion(options: VersionOptions = {}): string | null {
  * generateVersion('')        // '25.12.26.3' (release format)
  * generateVersion('dev')     // '25.12.26-dev.3'
  * generateVersion('beta')    // '25.12.26-beta.1'
+ * generateVersion('dev', { overrideCommitCount: 10 }) // '25.12.26-dev.10'
  */
 export function generateVersion(releaseType: string = '', options: VersionOptions = {}): string | undefined {
     try {
@@ -67,7 +70,16 @@ export function generateVersion(releaseType: string = '', options: VersionOption
         const day = String(now.getDate()).padStart(2, '0');
         const todayStr = `${now.getFullYear()}-${month}-${day}`;
         
-        const commitCount = getGitCommitCount(todayStr, options);
+        // Use override commit count if provided, otherwise get from git
+        const commitCount = options.overrideCommitCount !== undefined 
+            ? options.overrideCommitCount 
+            : getGitCommitCount(todayStr, options);
+        
+        // Show warning if commit count is overridden
+        if (options.overrideCommitCount !== undefined && !options.silent) {
+            console.warn(`WARNING: Using manual commit count (${options.overrideCommitCount}) instead of git history`);
+        }
+        
         const dateVersion = `${year}.${month}.${day}`;
         
         // If releaseType is empty or blank, use clean release format
@@ -98,6 +110,10 @@ export function generateVersion(releaseType: string = '', options: VersionOption
  * const devInfo = getVersionInfo('dev');
  * console.log(devInfo.version);         // '25.12.26-dev.2'
  * console.log(devInfo.releaseType);     // 'dev'
+ * 
+ * // With override
+ * const customInfo = getVersionInfo('beta', { overrideCommitCount: 5 });
+ * console.log(customInfo.version);      // '25.12.26-beta.5'
  */
 export function getVersionInfo(releaseType: string = '', options: VersionOptions = {}): VersionInfo | null {
     try {
@@ -107,7 +123,16 @@ export function getVersionInfo(releaseType: string = '', options: VersionOptions
         const day = String(now.getDate()).padStart(2, '0');
         const todayStr = `${now.getFullYear()}-${month}-${day}`;
         
-        const buildNumber = getGitCommitCount(todayStr, options);
+        // Use override commit count if provided, otherwise get from git
+        const buildNumber = options.overrideCommitCount !== undefined 
+            ? options.overrideCommitCount 
+            : getGitCommitCount(todayStr, options);
+        
+        // Show warning if commit count is overridden
+        if (options.overrideCommitCount !== undefined && !options.silent) {
+            console.warn(`WARNING: Using manual commit count (${options.overrideCommitCount}) instead of git history`);
+        }
+        
         const dateVersion = `${year}.${month}.${day}`;
         
         // Determine actual release type and version format

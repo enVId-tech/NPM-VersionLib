@@ -82,14 +82,23 @@ console.log(version); // '25.12.26-beta.3'
 ### CLI Usage
 
 ```bash
-npm-version          # Generates dev version (default)
-npm-version beta     # Generates beta version
-npm-version release  # Generates release version
-npm-version alpha    # Custom type
-npm-version --help   # Show help
+npm-version              # Generates release version (default)
+npm-version dev          # Generates dev version
+npm-version beta         # Generates beta version  
+npm-version alpha        # Custom type
+npm-version dev 5        # Dev version with commit count = 5 (⚠️ shows warning)
+npm-version 42           # Release version with commit count = 42 (shortcut)
+npm-version --help       # Show help
 ```
 
 **What it does:** Generates a version based on today's date and git commits, then updates your `package.json`.
+
+**Override Commit Count:** You can manually set the commit number as a second argument (useful for testing or version fixing):
+```bash
+npm-version dev 10       # Dev with commit count = 10 (shows warning)
+npm-version beta 5       # Beta with commit count = 5 (shows warning)
+npm-version 42           # Release with commit count = 42 (shortcut syntax)
+```
 #### `generateVersion(releaseType, options?)`
 
 Generates a version string based on the current date and git commits.
@@ -120,10 +129,17 @@ import { generateAndUpdateVersion } from 'npm-version-lib';
 
 const version = generateAndUpdateVersion();        // '25.12.26.5' (release)
 const devVersion = generateAndUpdateVersion('dev'); // '25.12.26-dev.5'
+
+// With manual commit count override (shows warning)
+const customVersion = generateAndUpdateVersion('dev', { 
+  overrideCommitCount: 10 
+}); // '25.12.26-dev.10'
+
 // Returns version string and updates package.json
 ```
 
-**Default:** Empty string (generates release format)
+**Default:** Empty string (generates release format)  
+**Options:** `projectPath`, `silent`, `overrideCommitCount`
 
 ---
 
@@ -286,6 +302,29 @@ The library gracefully handles common scenarios:
 | No `package.json` | Returns error, doesn't crash |
 | Invalid input | Shows help message |
 | File write fails | Returns `false`, logs error |
+
+## Configuration Options
+
+All library functions accept an optional `VersionOptions` object:
+
+```typescript
+interface VersionOptions {
+  projectPath?: string;         // Path to project directory (default: cwd)
+  silent?: boolean;             // Suppress console output (default: false)
+  overrideCommitCount?: number; // Override git commit count (shows warning)
+}
+```
+
+**Example:**
+```typescript
+import { generateVersion } from 'npm-version-lib';
+
+const version = generateVersion('dev', {
+  projectPath: '/path/to/project',
+  silent: true,
+  overrideCommitCount: 5  // Force commit count to 5 (⚠️ warning shown unless silent=true)
+});
+```
 2. **Git Commit Count**: Counts the number of commits made on the current day using git log
 3. **Version Assembly**: Combines date, release type, and commit count into a version string
 4. **File Updates**: Updates package.json and creates/updates src/version.ts with the new version
@@ -356,6 +395,9 @@ A: The library still works—commit count will default to 0.
 
 **Q: Can I use custom version types?**  
 A: Yes! Any string without spaces works: `npm-version staging`, `npm-version canary`, etc.
+
+**Q: Can I override the commit count?**  
+A: Yes! Pass a second argument to the CLI (`npm-version dev 10`) or use the `overrideCommitCount` option in the library. A warning will be displayed when you do this.
 
 **Q: Does it modify my Git history?**  
 A: No. It only reads Git data, never writes.
