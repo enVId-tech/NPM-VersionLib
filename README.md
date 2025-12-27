@@ -4,14 +4,14 @@ A TypeScript/JavaScript versioning library that generates build versions based o
 
 ## Features
 
-- 📦 **Library-first design** - Use as a dependency in your Node.js/TypeScript projects
-- 🖥️ **CLI tool included** - Also works as a command-line tool
-- 📅 **Date-based versioning** - Automatic version generation based on current date
-- 🔢 **Git commit counting** - Incremental build numbers from daily commits
-- 🎯 **Multiple release types** - Support for dev, beta, release, and custom types
-- ⚙️ **Flexible API** - Works with any project structure
-- 🎨 **TypeScript support** - Full TypeScript definitions included
-- 🚀 **Zero configuration** - Works out of the box
+- **Library-first design** - Use as a dependency in your Node.js/TypeScript projects
+- **CLI tool included** - Also works as a command-line tool
+- **Date-based versioning** - Automatic version generation based on current date
+- **Git commit counting** - Incremental build numbers from daily commits
+- **Multiple release types** - Support for dev, beta, release, and custom types
+- **Flexible API** - Works with any project structure
+- **TypeScript support** - Full TypeScript definitions included
+- **Zero configuration** - Works out of the box
 
 ## Version Format
 
@@ -352,3 +352,6 @@ enVId-tech
 - [npm Package](https://www.npmjs.com/package/npm-version-lib)
 - [GitHub Repository](https://github.com/enVId-tech/NPM-VersionLib)
 - [Issue Tracker](https://github.com/enVId-tech/NPM-VersionLib/issues)
+
+## Notes
+Refactored with AI, developed by enVId Tech
