@@ -1,6 +1,6 @@
 {
   "name": "npm-version-lib",
-  "version": "25.12.26-release.15",
+  "version": "25.12.26-release.16",
   "description": "A TypeScript/JavaScript versioning library that generates build versions based on date and git commits",
   "bin": {
     "npm-version": "dist/version-cli.js",
