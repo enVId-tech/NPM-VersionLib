@@ -262,19 +262,17 @@ impHow It Works
 
 ## CLI Commands
 
-The package provides three CLI aliases:
+The package provides two CLI aliases:
 
 ```bash
 npm-version      # Main command
 npm-v           # Short alias
-version-gen     # Alternative name
 ```
 
-All three work identically:
+Both work identically:
 ```bash
 npm-version release
 npm-v release
-version-gen release
 ```
 
 ## Error Handling

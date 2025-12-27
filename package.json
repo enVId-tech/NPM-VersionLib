@@ -4,8 +4,7 @@
   "description": "A TypeScript/JavaScript versioning library that generates build versions based on date and git commits",
   "bin": {
     "npm-version": "dist/version-cli.js",
-    "npm-v": "dist/version-cli.js",
-    "version-gen": "dist/version-cli.js"
+    "npm-v": "dist/version-cli.js"
   },
   "homepage": "https://github.com/enVId-tech/NPM-VersionLib#readme",
   "bugs": {
