@@ -26,21 +26,24 @@ Perfect for CI/CD pipelines, automated builds, and projects that need consistent
 
 ## Version Format
 
-Generates versions in the format: **`YY.MM.DD-[type].[commits]`**
+Generates versions in two formats:
+
+**Release Format (blank/empty type):** `YY.MM.DD.[commits]`  
+**Development Format:** `YY.MM.DD-[type].[commits]`
 
 | Component | Description | Example |
-|-----------|-------------|---------|
+|-----------|-------------|------|
 | `YY` | Year (last 2 digits) | `25` |
 | `MM` | Month (01-12) | `12` |
 | `DD` | Day (01-31) | `26` |
-| `type` | Release type | `dev`, `beta`, `release`, or custom |
+| `type` | Release type (optional) | `dev`, `beta`, or custom |
 | `commits` | Daily commit count | `3` |
 
 **Example Versions:**
 ```
+25.12.26.3          → Release (no type specified)
 25.12.26-dev.3      → Development, 3rd commit on Dec 26, 2025
 25.12.26-beta.1     → Beta release, 1st commit today
-25.12.26-release.5  → Production release, 5th commit today
 25.12.26-alpha.2    → Custom type "alpha", 2nd commit today
 ```
 
@@ -115,10 +118,12 @@ Generates a version and updates `package.json` in one step. **Most common use ca
 ```typescript
 import { generateAndUpdateVersion } from 'npm-version-lib';
 
-const version = generateAndUpdateVersion('release');
-// Returns: '25.12.26-release.5'
-// Updates: package.json with new version
+const version = generateAndUpdateVersion();        // '25.12.26.5' (release)
+const devVersion = generateAndUpdateVersion('dev'); // '25.12.26-dev.5'
+// Returns version string and updates package.json
 ```
+
+**Default:** Empty string (generates release format)
 
 ---
 
@@ -142,12 +147,21 @@ Returns detailed version metadata with type safety.
 ```typescript
 import { getVersionInfo } from 'npm-version-lib';
 
-const info = getVersionInfo('release');
+const info = getVersionInfo(); // Release format
 console.log(info);
 // {
-//   version: '25.12.26-release.5',
+//   version: '25.12.26.5',
 //   dateVersion: '25.12.26',
 //   releaseType: 'release',
+//   buildNumber: 5,
+//   timestamp: '2025-12-26T10:30:00.000Z'
+// }
+
+const devInfo = getVersionInfo('dev');
+// {
+//   version: '25.12.26-dev.5',
+//   dateVersion: '25.12.26',
+//   releaseType: 'dev',
 //   buildNumber: 5,
 //   timestamp: '2025-12-26T10:30:00.000Z'
 // }
@@ -196,7 +210,7 @@ if (version) {
 ```typescript
 import { generateAndUpdateVersion } from 'npm-version-lib';
 
-const releaseType = process.env.RELEASE_TYPE || 'dev';
+const releaseType = process.env.RELEASE_TYPE || ''; // Empty = release
 const version = generateAndUpdateVersion(releaseType);
 
 console.log(`Building version ${version}...`);
@@ -210,16 +224,16 @@ Add to `package.json`:
 ```json
 {
   "scripts": {
+    "version:release": "npm-version",
     "version:dev": "npm-version dev",
     "version:beta": "npm-version beta",
-    "version:release": "npm-version release",
-    "prebuild": "npm run version:dev",
+    "prebuild": "npm run version:release",
     "build": "tsc"
   }
 }
 ```
 
-Run: `npm run build` (auto-generates dev version before building)
+Run: `npm run build` (auto-generates release version before building)
 
 ### 3. CI/CD Pipeline
 
@@ -227,7 +241,8 @@ Run: `npm run build` (auto-generates dev version before building)
 import { generateAndUpdateVersion } from 'npm-version-lib';
 
 // GitHub Actions, GitLab CI, etc.
-const version = generateAndUpdateVersion('release', { silent: true });
+// Empty string = release format
+const version = generateAndUpdateVersion('', { silent: true });
 console.log(`::set-output name=version::${version}`);
 ```
 
@@ -238,7 +253,9 @@ impHow It Works
 
 1. **Extract Date** - Gets current date in `YY.MM.DD` format
 2. **Count Commits** - Runs `git rev-list` to count today's commits
-3. **Assemble Version** - Combines date + type + count: `25.12.26-beta.3`
+3. **Assemble Version** - Combines date + type + count:
+   - Release (no type): `25.12.26.3`
+   - With type: `25.12.26-beta.3`
 4. **Update Files** - Writes new version to `package.json` (and optionally to `src/version.ts`)
 
 **Fallback:** If Git is unavailable or no commits exist, commit count defaults to `0`.
@@ -333,6 +350,9 @@ FAQ
 **Q: Why use this over manual versioning?**  
 A: Automatic versioning eliminates human error, provides consistent version numbers, and works seamlessly in CI/CD pipelines.
 
+**Q: What's the difference between release and dev versions?**  
+A: Release versions use a clean format (`25.12.26.3`) while dev/beta/custom versions include the type (`25.12.26-dev.3`).
+
 **Q: What if I don't have Git?**  
 A: The library still works—commit count will default to 0.
 
@@ -341,9 +361,6 @@ A: Yes! Any string without spaces works: `npm-version staging`, `npm-version can
 
 **Q: Does it modify my Git history?**  
 A: No. It only reads Git data, never writes.
-
-**Q: Can I use this for monorepos?**  
-A: Yes. Use the `projectPath` option to target specific packages.
 
 ## Troubleshooting
 

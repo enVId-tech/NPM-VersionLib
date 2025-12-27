@@ -27,10 +27,16 @@ const colorize = (text: string, color: string) => `${color}${text}${c.r}`;
 function showHelp(): void {
     console.log(colorize('NPM-VersionLib CLI', c.b) + '\n');
     console.log(colorize('Usage:', c.yel));
-    console.log('  npm-version [type]  # dev (default), beta, release\n');
+    console.log('  npm-version [type]  # blank/empty = release (default)\n');
+    console.log(colorize('Version Types:', c.yel));
+    console.log('  (blank)  → 25.12.26.1     # Release (clean format)');
+    console.log('  dev      → 25.12.26-dev.1');
+    console.log('  beta     → 25.12.26-beta.1');
+    console.log('  custom   → 25.12.26-custom.1\n');
     console.log(colorize('Examples:', c.yel));
-    console.log('  npm-version         # dev version');
-    console.log('  npm-version beta    # beta version\n');
+    console.log('  npm-version              # Release version (25.12.26.1)');
+    console.log('  npm-version dev          # Dev version');
+    console.log('  npm-version beta         # Beta version\n');
     console.log(colorize('More:', c.cyn) + ' https://www.npmjs.com/package/npm-version-lib\n');
 }
 
@@ -41,21 +47,22 @@ function showHelp(): void {
  * @throws {Error} When version generation or file updates fail
  */
 function main() {
-    const arg = process.argv[2] || 'dev';
+    const arg = process.argv[2] || '';
 
     if (arg.includes('--help') || arg.includes('-h')) {
         showHelp();
         return;
     }
 
-    if (!arg || arg.includes(' ')) {
+    if (arg.includes(' ')) {
         console.error(colorize('Error: Invalid version type', c.red));
-        console.error('Use: dev, beta, release, or custom string without spaces\n');
+        console.error('Version type cannot contain spaces\n');
         process.exit(1);
     }
 
     try {
-        console.log(colorize(`Generating ${arg} version...`, c.yel));
+        const displayType = arg || 'release';
+        console.log(colorize(`Generating ${displayType} version...`, c.yel));
         
         const version = generateVersion(arg, { silent: true });
         if (!version) throw new Error('Version generation failed');

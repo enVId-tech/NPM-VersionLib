@@ -49,17 +49,17 @@ export function getProjectVersion(options: VersionOptions = {}): string | null {
 
 /**
  * Generates a semantic version number based on current date and git commits
- * Format: YY.MM.DD-[type].[commits]
+ * Format: YY.MM.DD-[type].[commits] or YY.MM.DD.[commits] for releases
  * 
- * @param releaseType - The release type (e.g., 'dev', 'beta', 'release', or custom)
+ * @param releaseType - The release type (e.g., 'dev', 'beta', or empty/blank for release)
  * @param options - Configuration options
  * @returns The generated version string, or undefined if generation fails
  * @example
+ * generateVersion('')        // '25.12.26.3' (release format)
  * generateVersion('dev')     // '25.12.26-dev.3'
  * generateVersion('beta')    // '25.12.26-beta.1'
- * generateVersion('release') // '25.12.26-release.2'
  */
-export function generateVersion(releaseType: string = 'dev', options: VersionOptions = {}): string | undefined {
+export function generateVersion(releaseType: string = '', options: VersionOptions = {}): string | undefined {
     try {
         const now = new Date();
         const year = now.getFullYear().toString().slice(-2);
@@ -68,7 +68,15 @@ export function generateVersion(releaseType: string = 'dev', options: VersionOpt
         const todayStr = `${now.getFullYear()}-${month}-${day}`;
         
         const commitCount = getGitCommitCount(todayStr, options);
-        return `${year}.${month}.${day}-${releaseType}.${commitCount}`;
+        const dateVersion = `${year}.${month}.${day}`;
+        
+        // If releaseType is empty or blank, use clean release format
+        if (!releaseType || releaseType.trim() === '') {
+            return `${dateVersion}.${commitCount}`;
+        }
+        
+        // Otherwise use the standard format with type
+        return `${dateVersion}-${releaseType}.${commitCount}`;
     } catch (err: any) {
         if (!options.silent) {
             console.error(`Error generating version: ${err.message}`);
@@ -79,16 +87,19 @@ export function generateVersion(releaseType: string = 'dev', options: VersionOpt
 /**
  * Generates and returns detailed version information
  * 
- * @param releaseType - The release type (e.g., 'dev', 'beta', 'release', or custom)
+ * @param releaseType - The release type (e.g., 'dev', 'beta', or empty/blank for release)
  * @param options - Configuration options
  * @returns Detailed version information object
  * @example
- * const info = getVersionInfo('beta');
- * console.log(info.version);     // '25.12.26-beta.2'
- * console.log(info.releaseType); // 'beta'
- * console.log(info.buildNumber); // 2
+ * const info = getVersionInfo('');      // Release format
+ * console.log(info.version);            // '25.12.26.2'
+ * console.log(info.releaseType);        // 'release'
+ * 
+ * const devInfo = getVersionInfo('dev');
+ * console.log(devInfo.version);         // '25.12.26-dev.2'
+ * console.log(devInfo.releaseType);     // 'dev'
  */
-export function getVersionInfo(releaseType: string = 'dev', options: VersionOptions = {}): VersionInfo | null {
+export function getVersionInfo(releaseType: string = '', options: VersionOptions = {}): VersionInfo | null {
     try {
         const now = new Date();
         const year = now.getFullYear().toString().slice(-2);
@@ -98,12 +109,17 @@ export function getVersionInfo(releaseType: string = 'dev', options: VersionOpti
         
         const buildNumber = getGitCommitCount(todayStr, options);
         const dateVersion = `${year}.${month}.${day}`;
-        const version = `${dateVersion}-${releaseType}.${buildNumber}`;
+        
+        // Determine actual release type and version format
+        const actualType = (!releaseType || releaseType.trim() === '') ? 'release' : releaseType;
+        const version = actualType === 'release' 
+            ? `${dateVersion}.${buildNumber}`
+            : `${dateVersion}-${releaseType}.${buildNumber}`;
         
         return {
             version,
             dateVersion,
-            releaseType,
+            releaseType: actualType,
             buildNumber,
             timestamp: now.toISOString()
         };
@@ -159,14 +175,14 @@ export function updatePackageVersion(newVersion: string, options: VersionOptions
 /**
  * Generates a new version and updates package.json in one step
  * 
- * @param releaseType - The release type (e.g., 'dev', 'beta', 'release', or custom)
+ * @param releaseType - The release type (e.g., 'dev', 'beta', or empty/blank for release)
  * @param options - Configuration options
  * @returns The generated version string, or null if operation failed
  * @example
- * const version = generateAndUpdateVersion('beta');
- * console.log(version); // '25.12.26-beta.3'
+ * const version = generateAndUpdateVersion();     // '25.12.26.3' (release)
+ * const betaVer = generateAndUpdateVersion('beta'); // '25.12.26-beta.3'
  */
-export function generateAndUpdateVersion(releaseType: string = 'dev', options: VersionOptions = {}): string | null {
+export function generateAndUpdateVersion(releaseType: string = '', options: VersionOptions = {}): string | null {
     const version = generateVersion(releaseType, options);
     if (version && updatePackageVersion(version, options)) {
         return version;
