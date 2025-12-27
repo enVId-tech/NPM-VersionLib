@@ -57,11 +57,11 @@ function main() {
     try {
         console.log(colorize(`Generating ${arg} version...`, c.yel));
         
-        const version = generateVersion(arg);
+        const version = generateVersion(arg, { silent: true });
         if (!version) throw new Error('Version generation failed');
 
-        updatePackageVersion(version);
-        createVersionFile(version);
+        updatePackageVersion(version, { silent: true });
+        createVersionFile(version, { silent: true });
 
         console.log(colorize(`✓ Version: ${version}`, c.grn));
         process.stdout.write(version + '\n');

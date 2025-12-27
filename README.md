@@ -1,21 +1,19 @@
 # NPM-VersionLib
 
-A TypeScript/JavaScript versioning library that generates build versions based on date and git commits. This tool automatically creates semantic version numbers using the current date and the number of commits made on that day.
+A TypeScript/JavaScript versioning library that generates build versions based on date and git commits. Use it as a CLI tool or import it programmatically into your projects.
 
 ## Features
 
-- Automatic version generation based on current date
-- Git commit counting for incremental versioning
-- Support for multiple release types (dev, beta, release)
-- CLI tool for easy integration into build pipelines
-- Automatic package.json version updates
-- Auto-generated TypeScript version file with build metadata
-- Colorized terminal output for better readability
-- Zero configuration required
+- 📦 **Library-first design** - Use as a dependency in your Node.js/TypeScript projects
+- 🖥️ **CLI tool included** - Also works as a command-line tool
+- 📅 **Date-based versioning** - Automatic version generation based on current date
+- 🔢 **Git commit counting** - Incremental build numbers from daily commits
+- 🎯 **Multiple release types** - Support for dev, beta, release, and custom types
+- ⚙️ **Flexible API** - Works with any project structure
+- 🎨 **TypeScript support** - Full TypeScript definitions included
+- 🚀 **Zero configuration** - Works out of the box
 
 ## Version Format
-
-The library generates versions in the following format:
 
 ```
 YY.MM.DD-[type].[commits]
@@ -25,8 +23,8 @@ Where:
 - `YY`: Last two digits of the year
 - `MM`: Month (01-12)
 - `DD`: Day (01-31)
-- `type`: Release type (dev, beta, or release)
-- `commits`: Number of commits made on the current day
+- `type`: Release type (dev, beta, release, or custom)
+- `commits`: Number of commits made today
 
 ### Examples
 
@@ -36,107 +34,166 @@ Where:
 
 ## Installation
 
-### Global Installation
+### As a Project Dependency
+
+```bash
+npm install npm-version-lib
+```
+
+### Global Installation (for CLI)
 
 ```bash
 npm install -g npm-version-lib
 ```
 
-### Local Installation
+### Development Dependency
 
 ```bash
 npm install --save-dev npm-version-lib
 ```
 
-## Usage
-
-### Command Line Interface
-
-The library provides two CLI commands: `npm-version` and `version-gen` (aliases for the same tool).
-
-#### Basic Usage
-
-```bash
-# Generate a development version (default)
-npm-version
-
-# Generate a development version (explicit)
-npm-version dev
-
-# Generate a beta version
-npm-version beta
-
-# Generate a release version
-npm-version release
-```
-
-#### With npx (without global installation)
-
-```bash
-npx npm-version dev
-npx npm-version beta
-npx npm-version release
-```
-
-#### Help and Version Information
-
-```bash
-# Display help information
-npm-version --help
-npm-version -h
-
-# Display current version
-npm-version --version
-npm-version -v
-```
+## Quick Start
 
 ### Programmatic Usage
 
-You can also use the library programmatically in your Node.js/TypeScript projects:
+```typescript
+import { generateAndUpdateVersion } from 'npm-version-lib';
+
+// Generate and update package.json in one line
+const version = generateAndUpdateVersion('beta');
+console.log(version); // '25.12.26-beta.3'
+```
+
+### CLI Usage
+
+```bash
+# Generate development version (default)
+npm-version
+npm-version dev
+
+# Generate beta version
+npm-version beta
+
+# Generate release version
+npm-version release
+
+# Custom version type
+npm-version alpha
+
+# Show help
+npm-version --help
+```
+
+## API Reference
+
+### Core Functions
+
+#### `generateVersion(releaseType, options?)`
+
+Generates a version string based on the current date and git commits.
 
 ```typescript
-import { generateVersion, updatePackageVersion, createVersionFile } from 'npm-version-lib';
+const version = generateVersion('beta');
+console.log(version); // '25.12.26-beta.3'
+```
 
-// Generate a version number
-const version = generateVersion('dev');
-console.log(version); // e.g., "25.09.20-dev.3"
+#### `getProjectVersion(options?)`
 
-// Update package.json with the new version
-updatePackageVersion(version);
+Reads and returns the current version from package.json.
 
-// Create/update the version.ts file with build metadata
+```typescript
+const currentVersion = getProjectVersion();
+console.log(currentVersion); // '25.12.26-dev.2'
+```
+
+#### `getVersionInfo(releaseType, options?)`
+
+Returns detailed version information.
+
+```typescript
+const info = getVersionInfo('release');
+console.log(info);
+// {
+//   version: '25.12.26-release.5',
+//   dateVersion: '25.12.26',
+//   releaseType: 'release',
+//   buildNumber: 5,
+//   timestamp: '2025-12-26T10:30:00.000Z'
+// }
+```
+
+#### `generateAndUpdateVersion(releaseType, options?)`
+
+Generates a version and updates package.json in one step.
+
+```typescript
+const version = generateAndUpdateVersion('beta');
+// Returns the version and updates package.json
+```
+
+#### `updatePackageVersion(version, options?)`
+
+Updates package.json with a specific version.
+
+```typescript
+updatePackageVersion('1.2.3-beta.1');
+```
+
+#### `createVersionFile(version, options?)`
+
+Creates src/version.ts with build metadata (optional).
+
+```typescript
+const version = generateVersion('release');
 createVersionFile(version);
+// Creates src/version.ts with constants
 ```
 
-### Using Generated Version File
+#### `getGitCommitCount(dateStr, options?)`
 
-After running the CLI, a `src/version.ts` file is automatically created with build information:
+Gets the number of git commits for a specific date.
 
 ```typescript
-import { 
-  BUILD_VERSION, 
-  BUILD_DATE, 
-  BUILD_TIMESTAMP, 
-  BUILD_INFO,
-  getBuildDateString,
-  getVersionDisplayString 
-} from './src/version';
-
-// Use the version information in your application
-console.log(`Version: ${BUILD_VERSION}`);
-console.log(`Build Date: ${BUILD_DATE}`);
-console.log(`Timestamp: ${BUILD_TIMESTAMP}`);
-
-// Use helper functions
-console.log(`Build Date: ${getBuildDateString()}`);
-console.log(`Display Version: ${getVersionDisplayString()}`);
+const commits = getGitCommitCount('2025-12-26');
+console.log(commits); // 5
 ```
 
-## Integration with Build Process
+### Options
 
-### npm Scripts
+All functions accept an optional `VersionOptions` parameter:
 
-Add version generation to your `package.json` scripts:
+```typescript
+interface VersionOptions {
+  projectPath?: string;  // Custom project directory
+  silent?: boolean;      // Suppress console output
+}
+
+// Example usage
+const version = generateVersion('beta', {
+  projectPath: './my-project',
+  silent: true
+});
+```
+
+## Use Cases
+
+### 1. In Build Scripts
+
+```typescript
+import { generateAndUpdateVersion, createVersionFile } from 'npm-version-lib';
+
+const releaseType = process.env.RELEASE_TYPE || 'dev';
+const version = generateAndUpdateVersion(releaseType);
+
+if (version) {
+  createVersionFile(version); // Optional: create version.ts
+  console.log(`Building version ${version}...`);
+}
+```
+
+### 2. In npm Scripts
+
+Add to your `package.json`:
 
 ```json
 {
@@ -144,39 +201,60 @@ Add version generation to your `package.json` scripts:
     "version:dev": "npm-version dev",
     "version:beta": "npm-version beta",
     "version:release": "npm-version release",
-    "prebuild": "npm run version:dev",
-    "build": "your-build-command"
+    "prebuild": "npm run version:dev"
   }
 }
 ```
 
-### CI/CD Pipeline
+### 3. In Your Application
 
-Integrate version generation into your CI/CD workflow:
+```typescript
+import { getProjectVersion } from 'npm-version-lib';
 
-```yaml
-# Example GitHub Actions workflow
-- name: Generate version
-  run: npx npm-version release
-
-- name: Build project
-  run: npm run build
+const version = getProjectVersion();
+console.log(`Running app version: ${version}`);
 ```
 
-## What Gets Updated
+### 4. CI/CD Pipeline
 
-When you run the version generation command, the following files are automatically updated:
+```typescript
+import { generateVersion, updatePackageVersion } from 'npm-version-lib';
 
-1. **package.json**: The `version` field is updated with the new version number
-2. **src/version.ts**: A TypeScript file is created/updated with:
-   - `BUILD_VERSION`: The generated version string
-   - `BUILD_DATE`: ISO timestamp of when the version was generated
-   - `BUILD_TIMESTAMP`: Unix timestamp in milliseconds
-   - `BUILD_INFO`: Object containing all build information
-   - `getBuildDateString()`: Helper function for readable date format
-   - `getVersionDisplayString()`: Helper function for version display
+const version = generateVersion('release', { silent: true });
+if (version) {
+  updatePackageVersion(version);
+  // Continue with deployment
+}
+```
 
 ## Requirements
+
+- Node.js 14.x or higher
+- Git (for commit counting functionality)
+- A package.json file in your project
+
+## How It Works
+
+1. **Date-based versioning**: Uses current date (YY.MM.DD) as the base version
+2. **Git commit counting**: Counts commits made today to generate build number
+3. **Flexible integration**: Use via CLI or import as a library
+4. **No file generation required**: Version info accessed via function calls
+5. **Optional version file**: Can generate src/version.ts if needed
+
+## TypeScript Support
+
+Full TypeScript definitions are included. Import types as needed:
+
+```typescript
+import type { VersionOptions, VersionInfo } from 'npm-version-lib';
+
+const options: VersionOptions = {
+  projectPath: './my-app',
+  silent: true
+};
+
+const info: VersionInfo | null = getVersionInfo('beta', options);
+```
 
 - Node.js (v14 or higher recommended)
 - Git (for commit counting functionality)

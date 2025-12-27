@@ -1,6 +1,6 @@
 {
   "name": "npm-version-lib",
-  "version": "25.12.26-beta.5",
+  "version": "25.12.26-dev.7",
   "description": "A TypeScript/JavaScript versioning library that generates build versions based on date and git commits",
   "bin": {
     "npm-version": "dist/version-cli.js",
@@ -17,8 +17,14 @@
   },
   "license": "MIT",
   "author": "enVId-tech",
-  "main": "./dist/generate-version.js",
-  "types": "./dist/generate-version.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "files": [
     "dist",
     "README.md",
